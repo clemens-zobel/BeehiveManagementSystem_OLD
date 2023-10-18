@@ -28,24 +28,22 @@ namespace BeehiveManagementSystem
             }
         }
 
-        static private string statusReport = "";
 
         public string StatusReport
         {
-            get
-            {
-                statusReport = $"{HoneyVault.StatusReport} \n \n" +
+            get; private set;
+        }
+
+        private void UpdateStatusReport()
+        {
+            StatusReport = $"{HoneyVault.StatusReport} \n \n" +
                     $"Egg count: {eggs: 0.00} \n" +
                     $"Unassigned workers: {Math.Round(unassignedWorkers, 2, MidpointRounding.ToZero)} \n" +
                     $"{WorkerStatus("Nectar Collector")}\n" +
                     $"{WorkerStatus("Honey Manufacturer")}\n" +
                     $"{WorkerStatus("Egg Care")}\n" +
                     $"TOTAL WORKERS: {workers.Length}";
-
-                OnPropertyChanged("StatusReport");
-
-                return statusReport;
-            }
+            OnPropertyChanged("StatusReport");
         }
 
         public Queen() : base("Queen")
@@ -73,6 +71,7 @@ namespace BeehiveManagementSystem
             }
 
             HoneyVault.ConsumeHoney(HONEY_PER_UNASSIGNED_WORKER * unassignedWorkers);
+            UpdateStatusReport();
         }
 
         private void AddWorker(Bee worker)
@@ -101,6 +100,7 @@ namespace BeehiveManagementSystem
                     AddWorker(new EggCare(this));
                     break;
             }
+            UpdateStatusReport();
         }
 
         public void CareForEggs(float eggsToConvert)
